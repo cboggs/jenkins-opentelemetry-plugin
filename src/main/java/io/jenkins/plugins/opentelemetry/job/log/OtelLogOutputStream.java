@@ -48,6 +48,9 @@ final class OtelLogOutputStream extends LineTransformationOutputStream {
         } else {
             AttributesBuilder attributesBuilder = Attributes.builder();
             if (ENABLE_LOG_FORMATTING && textAndAnnotations.annotations != null) {
+                LOGGER.log(Level.INFO, () -> "ENABLE_LOG_FORMATTING: " + ENABLE_LOG_FORMATTING);
+                Boolean tnaa = textAndAnnotations.annotations == null;
+                LOGGER.log(Level.INFO, () -> "textAndAnnotations.annotationsNull: " + tnaa);
                 attributesBuilder.put(JenkinsOtelSemanticAttributes.JENKINS_ANSI_ANNOTATIONS, textAndAnnotations.annotations.toString());
             }
             attributesBuilder.putAll(runTraceContext.toAttributes());
@@ -59,8 +62,8 @@ final class OtelLogOutputStream extends LineTransformationOutputStream {
                 .setContext(runTraceContext.getContext())
                 .setTimestamp(clock.now(), TimeUnit.NANOSECONDS)
                 .emit();
-            LOGGER.log(Level.INFO, () -> runTraceContext.jobFullName + "#" + runTraceContext.runNumber + " - emit body: '" + StringUtils.abbreviate(plainLogLine, 30) + "'");
-            LOGGER.log(Level.INFO, () -> "ENABLE_LOG_FORMATTING: " + ENABLE_LOG_FORMATTING);
+            LOGGER.log(Level.FINEST, () -> runTraceContext.jobFullName + "#" + runTraceContext.runNumber + " - emit body: '" + StringUtils.abbreviate(plainLogLine, 30) + "'");
+            // LOGGER.log(Level.INFO, () -> "ENABLE_LOG_FORMATTING: " + ENABLE_LOG_FORMATTING);
         }
     }
 
